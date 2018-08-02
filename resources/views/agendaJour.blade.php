@@ -1,5 +1,5 @@
 
-<!--la vue affiche le planing du jour séléctionné-->             
+                
                     
                     <table >
                     <tr>
@@ -44,10 +44,8 @@
                         @for($i=0;$i<(count($plage)-1);$i++)
                             
                             @for($j=0;$j<(count($plage[$i]));$j++)
-                            @if($j!=0 and $plage[$i][$j][0]==false)
-                            
+                            @if($plage[$i][$j]==false)
                                 <td style="background-color:red;width:50px">
-                                <p><?php echo($plage[$i][$j][1]);?></p>
                             @else
                                 <td style="background-color:blue;width:50px">
                             @endif
@@ -57,7 +55,7 @@
                                     @if($j==0)
                                     <p><?php echo($plage[$i][$j]->format('H:i'));?></p>
                                     @else
-                                    
+                                    <p><?php echo($plage[$i][$j]);?></p>
                                     @endif
                                     </form>
                                 </td>

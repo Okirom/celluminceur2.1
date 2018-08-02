@@ -16,38 +16,45 @@ use App;
 
 class ClientRecherche extends Controller
 {
-    /****************************************************** */
-    /*fonction de recherche de client (alphabetique ou tous)*/
-    /****************************************************** */
+
+
     public function cherche(Request $request)
     {
   
     $test=$request->test;
     $client=App\Client::where('nom','like',$test.'%')->get();
-    
+    //$client=App\Client::All();
+    //dd($client);
 
 
 
     return View::make('clientResultat')
             ->With('clients',$client); 
+
+    
     }
 
-    /************************************************ */
-    /*fonction de recherche des abonnement d'un client*/
-    /************************************************ */
     public function chercheAbonnement($id)
     {
-        
+        /*$test=$request->test;
+        $abonnement=App\Abonnement::where('nom','like',$test.'%')->get();
+    //$client=App\Client::All();
+    //dd($client);*/
 
             $client=App\Client::find($id);
+            //dd($client,$id);
             $abonnements=$client->abonnements;
-            
+            //dd($abonnements);
+           // foreach()
+            //$packs=App\Pack::find($abonnements->pack_id);
+            //dd($packs);
+
 
         return View::make('clientAbonnement')
                 ->With('abonnements',$abonnements) 
                 ->With('client',$client);
                 
-        
+        ///var_dump('grrrrrrrrrrrrrrrrrrrrrrrr');
     }
 
 }

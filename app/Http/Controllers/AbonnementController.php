@@ -102,7 +102,7 @@ class AbonnementController extends Controller
      */
     public function show($id)
     {
-        //grrrrrrrrrrrrrrrrrrrrrr
+        //
     }
 
     /**
