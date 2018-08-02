@@ -13,8 +13,9 @@ use App\Pack;
 use App\ressource\views;
 use Illuminate\Support\Facades\View;
 
-
-
+/*********** */
+/*CRUD client*/
+/*********** */
 class CrudController extends Controller
 {
     /**
@@ -61,7 +62,6 @@ class CrudController extends Controller
 
         $this->validate($request,['nom'=>'required']);
         $client=new Client;
-        //$client->save();
         $client->nom=$request->nom;
         $client->prenom=$request->prenom;
         $client->date_de_naissance=$request->date_de_naissance;
@@ -69,12 +69,6 @@ class CrudController extends Controller
         $client->telephone=$request->telephone;
         $client->email=$request->email;
         $client->commentaire=$request->commentaire;
-        //$abonnement=new Abonnement;
-        //$abonnement->client_id=$client->id;
-        //$abonnement->nom='grrrr';
-        //var_dump($abonnement);
-        //$client->abonnements()->save($abonnement);
-        //dd($client);
         $client->save();
 
         return redirect('control');        
@@ -88,10 +82,6 @@ class CrudController extends Controller
      */
     public function show($id=null)
     {
-        //var_dump($id);
-        //$client=new Client;
-        //$id=$_GET["id"];
-        //var_dump($id);
         $client=Client::find($id);
         return View::make('formulaireClient')
                 ->With('client',$client);
@@ -109,12 +99,7 @@ class CrudController extends Controller
     public function edit(Request $request)
     {
         
-        //var_dump($id);
-        //$client=new Client;
-       // $id=$_GET["id"];
         $id=$request->id;
-
-        var_dump($id);
         $client=Client::find($id);
         return View::make('formulaireClient')
                 ->With('client',$client);
@@ -129,14 +114,7 @@ class CrudController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
-        
-        //var_dump($id);
-        //$client=new Client;
-        //$id=$_GET["id"];
-        //var_dump($id);
         $client=Client::find($id);
-        //dd($client);
         $client->nom=$request->nom;
         $client->prenom=$request->prenom;
         $client->prenom=$request->prenom;
@@ -156,11 +134,6 @@ class CrudController extends Controller
      */
     public function destroy($id)
     {
-        
-        var_dump($id);
-        //$client=new Client;
-        //$id=$_GET["id"];
-        
         $client=Client::find($id);
         $client->delete();
         return redirect('control');

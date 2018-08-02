@@ -27,19 +27,28 @@
                     @for($i=0;$i<(count($mois)-1);$i++)
                             @if($mois[$i]=="XXX")
                             
-                            <td><form><p>XXX</p></form></td>
+                            <td style="background-color:blue;"><form><p>XXX</p></form></td>
                             
                             
                             @else
                        
-
-                                <td>
+                                @if($resa[$i]==false)
+                                <td style="background-color:green;">
                                     <form action="jour/{{$client->id}}"formmethod="get">
                                     <input type="hidden"name="jour"value="{{$mois[$i]->format('y-m-d')}}">
                                     <p><?php echo($mois[$i]->format('l/m'))?></p>
                                     <input type="submit"  value="JOUR">
                                     </form>
                                 </td>
+                                @else
+                                <td style="background-color:red;">
+                                    <form action="jour/{{$client->id}}"formmethod="get">
+                                    <input type="hidden"name="jour"value="{{$mois[$i]->format('y-m-d')}}">
+                                    <p><?php echo($mois[$i]->format('l/m'))?></p>
+                                    <input type="submit"  value="JOUR">
+                                    </form>
+                                </td>
+                                @endif
                             
 
                             @endif
