@@ -47,9 +47,6 @@ class SeanceController extends Controller
 
     public function store(SeanceRequest $request)
     {
-        //$name=$request->input('name');
-        
-        //Seance::ceate($request->all());
         $seance=new Seance;
         $seance->type=$request->input('nom');
         $seance->duree=$request->input('duree');

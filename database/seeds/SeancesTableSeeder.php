@@ -9,6 +9,9 @@ class SeancesTableSeeder extends Seeder
      *
      * @return void
      */
+    /*************************************************************** */
+    /*ce seeder permet de rentrer les prestation reel de l'entreprise*/
+    /*************************************************************** */
     public function run()
     {
         DB::table('seances')->insert([
