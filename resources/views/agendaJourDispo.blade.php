@@ -14,7 +14,31 @@
                         <th>ELECTROSTIMULATION</th>
                         
                     </tr>
-                  
+                    <tr>
+                    <td></td>
+                    @for($i=0;$i<5;$i++)
+                    <th>
+                    
+               
+                    
+                    <form action="reservation/{{$client->id}}"method="get">
+                        <input name="_token" type="hidden" value="{{csrf_token()}}"/>
+                        <input type="hidden"name="jour"value="{{$plage[0][0]->format('y-m-d')}}">
+                            
+                                <input list="idabonnement"name="id_abonnement">
+                                    <datalist id="idabonnement">
+                                    @foreach($abonnements as $abonnement)
+                                    <option  value="{{$abonnement->id}}">{{$abonnement->pack->nom}}</option>
+                                    @endforeach   
+                                    </datalist> 
+                            
+                        <input type="submit"value="disponnibilité">
+                    </form>
+                    
+                    
+                    </th>
+                    @endfor
+                    </tr>
                     <tr>
                         
                         @for($i=0;$i<(count($plage)-1);$i++)
@@ -25,23 +49,17 @@
                             @else
                                 <td style="background-color:green;width:50px">
                             @endif
-                                    
-                                    @if($j==0)
-                                    
-                                    <p><?php echo($plage[$i][$j]->format('H:i'));?></p>
-                                    @else
                                     <form action="enregistrement/{{$client->id}}"method="get">
-                                    
                                     <input type="hidden" name="id_abonnement"value="<?php echo($abonnement->id)?>">
                                     <input name="_token" type="hidden" value="{{csrf_token()}}"/>
                                     <input type="hidden"name="jour"value="{{$plage[0][0]->format('y-m-d')}}">
-                                    <input type="hidden" name="dispo"value="<?php echo($plage[$i][$j]);?>">
-                                    <input type="hidden" name="heure" value="<?php echo($plage[$i][0]->format('H:i'));?>">
-                                    <p><?php echo($plage[$i][$j]);?></p>
+                                    @if($j==0)
+                                    <input type="text" name="heure" value="<?php echo($plage[$i][$j]->format('H:i'));?>">
+                                    @else
+                                    <input type="text" name="dispo"value="<?php echo($plage[$i][$j]);?>">
+                                    @endif
                                     <input type="submit" value="reserver">
                                     </form>
-                                    @endif
-                                    
                                 </td>
                             @endfor
                         

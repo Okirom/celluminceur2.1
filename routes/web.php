@@ -74,6 +74,6 @@ Route::get('client/agenda/jour/{id}','AgendaController@showJour');
 //Route::get('client/agenda/jour/reservation/{id}','AgendaController@agendaReservation');
 
 //************************************************************************RESERVATION*/
-//Route::post('client/agenda/jour/reservation/{id}','ReservationController@dispo');
+Route::post('client/agenda/jour/reservation/{id}','ReservationController@dispo');
 Route::get('client/agenda/jour/reservation/{id}','ReservationController@dispo');
 Route::get('client/agenda/jour/reservation/enregistrement/{id}','ReservationController@enregistrement');

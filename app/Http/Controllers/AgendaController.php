@@ -19,64 +19,45 @@ use App;
 
 class AgendaController extends Controller
 {
-    /******************************************************************************************AGENDA**DU**MOIS***************** */
-    /*affichage du mois à partir de la date machine du jours + affichage des jours réservés du client*/
-    /******************************************************************************************AGENDA**DU**MOIS***************** */
-
+    //******************************************************************************************AGENDA**DU**MOIS***************** */
     public function showMois($id)
     {
-        //déclaration
-
+        var_dump('grrrrrrrrrrrrrrrrrAGENDArrrrrrr');
         $client=Client::find($id);
         $jour=new DateTime;
+        //$today=new DateTime($request->jour);
         $abonnements=$client->abonnements;
-        $mois=[];
-        $resa=[];
-        $j=0;
-        
-        /*********************************************************************** */
-        /*tableau de réservations pour chaque abonnement => tableau à 2 dimension*/
-        /*********************************************************************** */
-
+        //dd($abonnements);
         $reservations=[];
         foreach($abonnements as $abonnement)
             {
                 $reservation=$abonnement->reservations;
                 array_push($reservations,$reservation);
             }
-
-        /****************************** */
-        /*controle réservation du client*/
-        //dd($reservations);
-        /****************************** */
-     
-
-      
-        /************************************************************************** */
-        /*gestion du début du tableau pour faire corespondre les jours de la semaine*/
-        /************************************************************************** */
-
+        //$reservations=Reservation::where('jour','=',$today)->get();
+        //dd($reservations,$abonnements);
+        var_dump($reservations[0][0]->jour);
+        $mois=[];
+        $resa=[];
+        $j=0;
+        //$clone=clone $jour;
+        //$clone->modify('+1 day');
         switch($jour->format('l'))
         {
             case 'Tuesday':
                 $mois[0]="XXX";
-                $resa[0]=false;
                 $j=1;
                 break;
             case 'Wednesday':
                 $mois[0]="XXX";
                 $mois[1]="XXX";
-                $resa[0]=false;
-                $resa[1]=false;
+                
                 $j=2;
                 break;
             case 'Thursday':
                 $mois[0]="XXX";
                 $mois[1]="XXX";
                 $mois[2]="XXX";
-                $resa[0]=false;
-                $resa[1]=false;
-                $resa[2]=false;
                 $j=3;
                 break;
             case 'Friday':
@@ -84,10 +65,6 @@ class AgendaController extends Controller
                 $mois[1]="XXX";
                 $mois[2]="XXX";
                 $mois[3]="XXX";
-                $resa[0]=false;
-                $resa[1]=false;
-                $resa[2]=false;
-                $resa[3]=false;
                 $j=4;
                 break;
             case 'Saturday':
@@ -96,11 +73,6 @@ class AgendaController extends Controller
                 $mois[2]="XXX";
                 $mois[3]="XXX";
                 $mois[4]="XXX";
-                $resa[0]=false;
-                $resa[1]=false;
-                $resa[2]=false;
-                $resa[3]=false;
-                $resa[4]=false;
                 $j=5;
                 break;
             case 'Sunday':
@@ -110,102 +82,50 @@ class AgendaController extends Controller
                 $mois[3]="XXX";
                 $mois[4]="XXX";
                 $mois[5]="XXX";
-                $resa[0]=false;
-                $resa[1]=false;
-                $resa[2]=false;
-                $resa[3]=false;
-                $resa[4]=false;
-                $resa[5]=false;
                 $j=6;
                 break;
         }
         
-        /************************************************************* */
-        /*remplissage du tableau mois pour 30 jour + les XXX de la date*/
-        /*initialisation du tableau résa à false*/
-        /************************************************************* */
-
         for($i=0+$j;$i<31+$j;$i++)
         {
             $clone=clone $jour;
             $str="+".(string)$i-$j." "."day";
+            //var_dump($str);
             $clone->modify($str);
-            $resa[]=false;
-            $mois[$i] =$clone;
-        }
-
-        /************************************ */
-        /*controle de l'initialisation de résa*/
-        //dd($resa);
-        /************************************ */
-
-
-
-        /****************************************************************** */
-        /*comparaison des dates de réservation avec les date du mois calculé*/
-        /****************************************************************** */
-        for($x=0;$x<count($reservations);$x++)
+            for($x=0;$x<count($reservations);$x++)
             {
                 for($y=0;$y<count($reservations[$x]);$y++)
+
                 {
                     $jourResa=new DateTime($reservations[$x][$y]->jour);
-                    
-                    for($z=0;$z<count($mois);$z++)
-                    {
-
-                        $test=$mois[$z];
-                        if($test!="XXX")
-                        
-                        
-                        {
-                        if($jourResa->format('y-m-d')==$test->format('y-m-d'))
-                        {
-                            $resa[$z]=true;
-                            
-                        }
-                        }
-                       
-                       
-                        
-                    
-                    }
+                    //var_dump($jourResa->format('y-m-d'),"***");
+                    //var_dump($clone->format('y-m-d'));
+                    if($jourResa->format('y-m-d')==$clone->format('y-m-d'))
+                        $resa[$i]=true;
+                    else
+                        $resa[$i]=false;
                 }
             }
-
-
-        /*************************************** */
-        /*controle préparation des données de vue*/
-        //dd($resa,$mois);
+            $mois[$i] =$clone;
+        }
+        //dd($resa);
+        //var_dump($jour);
         //dd($mois);
-        /*************************************** */
-
-
-
-        /******************** */
-        /*lancement de la vue */
         return View::make('agendaMois')
             ->with('mois',$mois)
             ->with('client',$client)
-            ->with('resa',$resa);
+            ->with('reservations',$reservations);
             
         
     }
     //******************************************************************************************AGENDA**DU**JOUR***************** */
-    /*affichage du détail jour avec les réservations du jour*/
-    //******************************************************************************************AGENDA**DU**JOUR***************** */
     public function showJour(Request $request,$id)
     {
-        /*déclaration*/
+        //var_dump('grrrrrrrrrrrrrrrrrrrrrJOURrrrrrrrrrrrrrrrrrr');
         $client=Client::find($id);
         $abonnements=$client->abonnements;
         $today=new DateTime($request->jour);
         $reservations=Reservation::where('jour','=',$today)->get();
-
-        /************************************************************ */
-        /*controle de la récupération des réservation du jour concerné*/
-        //dd($reservations);
-        /************************************************************ */
-        
         $plage=[];
         $ligne=[];
         $resa=[];
@@ -213,18 +133,21 @@ class AgendaController extends Controller
         $h=9;
         $m=0;
         $heure=new Datetime($request->jour);
-        $heure->setTime(8,55);
-        /******************************************************************************************************/
-        /*remplissage du tableau à 2 dimension des plage libre ou réservé en fonction des préstation proposées*/
-        /******************************************************************************************************/
-        /************************************************ */
-        /*premier tableau : création des plages horraires */
-        for($i=0;$i<125;$i++)
+        $heure->setTime(9,0);
+        //$heure=$h.":".$m;
+        $ligne[0]=$heure;
+        $ligne[1]="test";
+        $ligne[2]="lalalala";
+        $ligne[3]="et c'est partie";
+        $ligne[4]="c'est bon ça";
+        $ligne[5]="et voilà de la date";
+        $plage[0]=$ligne;
+        //$heure->modify("+5 minute");
+        //dd($heure);
+        for($i=1;$i<125;$i++)
         {
-            /********************************************************** */
-            /*enregistrement de la disponnibilité pour chaque préstation*/
-            /*enregistrement du nom associé*/
-            /********************************************************** */
+            
+
             for($j=0;$j<6;$j++)
             {
                 
@@ -232,148 +155,73 @@ class AgendaController extends Controller
                 switch($j)
                     {
                         case 0:
-                         
+                            /*$m=$m+5;
+                            $heure=$h.":".$m;
+                            if(($i)%12==0)
+                            {
+                                $h=$h+1;
+                                $m=0;
+                                $heure=$h.":".$m;
+                                $ligne[$j]=$heure;
+                                break;
+                            }*/
                             $clone=clone $heure;
                             $m=$m+5;
                             $str="+".(string)$m." "."minutes";
                             $clone->modify($str);
                             $ligne[$j]=$clone;
+                            
+                            //$resa[$j]=$clone;
                             break;
-
                         case 1:
-                            $dispo=[];
-                            $dispo[0]=true;
+                            $dispo=true;
                             foreach($reservations as $reservation)
                             {
                                 
                                 if($reservation->abonnement->pack->seance->type=="coaching")
                                 {
+                                //$clone1=clone $heure;
+                                //$m=$m+5;
+                                //$str="+".(string)$m." "."minutes";
+                                //$clone1->modify($str);
                                 $hd=new DateTime($reservation->heure_debut);
                                 $hf=new DateTime($reservation->heure_fin);
+                                //var_dump($clone,$hd,$hf);
+                                //var_dump($clone<$hf,"***********",$clone,"***********",$hf);
+                                //var_dump($clone>$hd,"***********",$clone,"***********",$hd);
+                                //dd($reservation->heure_fin);
                                 if(  $clone<=$hf and $clone>=$hd)
-                                {
-                                $dispo[0]=false;
-                                $dispo[1]=$reservation->abonnement->client->nom;
-                                }
+                                $dispo=false;
                                 }
                            
                             }
                             $ligne[$j]=$dispo;
                             break;
-
                         case 2:
-                            $dispo=[];
-                            $dispo[0]=true;
-                            foreach($reservations as $reservation)
-                            {
-                                
-                                if($reservation->abonnement->pack->seance->type=="cellum_6_30")
-                                {
-                                $hd=new DateTime($reservation->heure_debut);
-                                $hf=new DateTime($reservation->heure_fin);
-                                if(  $clone<=$hf and $clone>=$hd)
-                                {
-                                $dispo[0]=false;
-                                $dispo[1]=$reservation->abonnement->client->nom;
-                                }
-                                }
-                                if($reservation->abonnement->pack->seance->type=="cellum_6_20")
-                                {
-                                $hd=new DateTime($reservation->heure_debut);
-                                $hf=new DateTime($reservation->heure_fin);
-                                if(  $clone<=$hf and $clone>=$hd)
-                                {
-                                $dispo[0]=false;
-                                $dispo[1]=$reservation->abonnement->client->nom;
-                                }
-                                }
-                           
-                            }
-                            $ligne[$j]=$dispo;
+                            $ligne[$j]="arrgggh";
                             break;
-                            
                         case 3:
-                            $dispo=[];
-                            $dispo[0]=true;
-                            foreach($reservations as $reservation)
-                            {
-                                
-                                if($reservation->abonnement->pack->seance->type=="bodysculptor")
-                                {
-                                $hd=new DateTime($reservation->heure_debut);
-                                $hf=new DateTime($reservation->heure_fin);
-                                if(  $clone<=$hf and $clone>=$hd)
-                                {
-                                $dispo[0]=false;
-                                $dispo[1]=$reservation->abonnement->client->nom;
-                                }
-                                }
-                           
-                            }
-                            $ligne[$j]=$dispo;
+                            $ligne[$j]="test";
                             break;
-                            
                         case 4:
-                            $dispo=[];
-                            $dispo[0]=true;
-                            foreach($reservations as $reservation)
-                            {
-                                
-                                if($reservation->abonnement->pack->seance->type=="pressotherapie")
-                                {
-                                $hd=new DateTime($reservation->heure_debut);
-                                $hf=new DateTime($reservation->heure_fin);
-                                if(  $clone<=$hf and $clone>=$hd)
-                                {
-                                $dispo[0]=false;
-                                $dispo[1]=$reservation->abonnement->client->nom;
-                                }
-                                }
-                           
-                            }
-                            $ligne[$j]=$dispo;
+                            $ligne[$j]="*****";
                             break;
-                            
                         case 5:
-                            $dispo=[];
-                            $dispo[0]=true;
-                            foreach($reservations as $reservation)
-                            {
-                                
-                                if($reservation->abonnement->pack->seance->type=="electrostimilation")
-                                {
-                                $hd=new DateTime($reservation->heure_debut);
-                                $hf=new DateTime($reservation->heure_fin);
-                                if(  $clone<=$hf and $clone>=$hd)
-                                {
-                                $dispo[0]=false;
-                                $dispo[1]=$reservation->abonnement->client->nom;
-                                }
-                                }
-                           
-                            }
-                            $ligne[$j]=$dispo;
+                            $ligne[$j]=".....";
                             break;
-                            
                                 
                     }
             }
-            
+            //$resa[$i]=$ligneResa;
             $plage[$i]=$ligne;
         }
-        /************************************************** */
-        /*controle du chargement du tableau multidimentionel*/
-        //dd($plage[0][0][0]);
+        //dd($resa);
         //dd($plage);
-        /************************************************** */
-
-
-        /*lancement de la vue détail du jour*/
         return View::make('agendaJour')
             ->with('plage',$plage)
             ->with('client',$client)
-            ->with('abonnements',$abonnements);
-            
+            ->with('abonnements',$abonnements)
+            ->with('resa',$resa);
     }
     public function agendaReservation($id)
     {
