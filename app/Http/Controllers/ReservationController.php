@@ -17,126 +17,186 @@ use Illuminate\Support\Facades\View;
 
 class ReservationController extends Controller
 {
+    /**************************** */
+    /*affichage des disponibilités*/
+    /**************************** */
     public function dispo(Request $request,$id)
     {
-        var_dump('grrrrrrrrRESArrrrrrrrrrrrrrrrr');
-        //$reservation=Reservation::where()
+            
+        /*********** */
+        /*déclaration*/
+        /*********** */
         $abonnement=Abonnement::find($request->id_abonnement);
+        $client=Client::find($id);
+        $abonnements=$client->abonnements;
         $today=new DateTime($request->jour);
         $reservations=Reservation::where('jour','=',$today)->get();
+
+
+
+        /************************************************************ */
+        /*controle de la récupération des réservation du jour concerné*/
         //dd($reservations);
-        //dd($abonnement->pack->seance->duree);
-        //var_dump($today);
-        //var_dump($abonnement);
-        //var_dump($reservations);
-        //dd($request);
-       
-       
-            //var_dump('grrrrrrrrrrrrrrrrrrrrrJOURrrrrrrrrrrrrrrrrrr');
-            $client=Client::find($id);
-            $abonnements=$client->abonnements;
-            $plage=[];
-            $ligne=[];
-            $resa=[];
-            $ligneResa=[];
-            $dispo=true;
-            $h=9;
-            $m=0;
-            $heure=new Datetime($request->jour);
-            $heure->setTime(9,0);
-            //$heure=$h.":".$m;
-            $ligne[0]=$heure;
-            $ligne[1]="test";
-            $ligne[2]="lalalala";
-            $ligne[3]="et c'est partie";
-            $ligne[4]="c'est bon ça";
-            $ligne[5]="et voilà de la date";
-            $plage[0]=$ligne;
-            //$heure->modify("+5 minute");
-            //dd($heure);
-            for($i=1;$i<125;$i++)
+        /************************************************************ */
+        
+        $plage=[];
+        $ligne=[];
+        $resa=[];
+        $ligneResa=[];
+        $h=9;
+        $m=0;
+        $heure=new Datetime($request->jour);
+        $heure->setTime(8,55);
+        /******************************************************************************************************/
+        /*remplissage du tableau à 2 dimension des plage libre ou réservé en fonction des préstation proposées*/
+        /******************************************************************************************************/
+        /************************************************ */
+        /*premier tableau : création des plages horraires */
+        for($i=0;$i<125;$i++)
+        {
+            /********************************************************** */
+            /*enregistrement de la disponnibilité pour chaque préstation*/
+            for($j=0;$j<6;$j++)
             {
                 
-    
-                for($j=0;$j<6;$j++)
-                {
-                    
-    
-                    switch($j)
-                        {
-                            case 0:
-                                /*$m=$m+5;
-                                $heure=$h.":".$m;
-                                if(($i)%12==0)
-                                {
-                                    $h=$h+1;
-                                    $m=0;
-                                    $heure=$h.":".$m;
-                                    $ligne[$j]=$heure;
-                                    break;
-                                }*/
-                                $clone=clone $heure;
-                                $m=$m+5;
-                                $str="+".(string)$m." "."minutes";
-                                $clone->modify($str);
-                                $ligne[$j]=$clone;
+
+                switch($j)
+                    {
+                        case 0:
+                         
+                            $clone=clone $heure;
+                            $m=$m+5;
+                            $str="+".(string)$m." "."minutes";
+                            $clone->modify($str);
+                            $ligne[$j]=$clone;
+                            break;
+
+                        case 1:
+                            $dispo=true;
+                            foreach($reservations as $reservation)
+                            {
                                 
-                                //$resa[$j]=$clone;
-                                break;
-                            case 1:
-                                foreach($reservations as $reservation)
+                                if($reservation->abonnement->pack->seance->type=="coaching")
                                 {
-                                    $dispo=true;
-                                    if($reservation->abonnement->pack->seance->type=="coaching")
-                                    {
-                                        //$clone1=clone $heure;
-                                        //$m=$m+5;
-                                        //$str="+".(string)$m." "."minutes";
-                                        //$clone1->modify($str);
-                                        $hd=new DateTime($reservation->heure_debut);
-                                        $hf=new DateTime($reservation->heure_fin);
-                                        //var_dump($clone,$hd,$hf);
-                                        //var_dump($clone<$hf,"***********",$clone,"***********",$hf);
-                                        //var_dump($clone>$hd,"***********",$clone,"***********",$hd);
-                                        //dd($reservation->heure_fin);
-                                        if(  $clone<=$hf and $clone>=$hd)
-                                        $dispo=false;
-                                    }
-                                   
+                                $hd=new DateTime($reservation->heure_debut);
+                                $hf=new DateTime($reservation->heure_fin);
+                                if(  $clone<=$hf and $clone>=$hd)
+                                $dispo=false;
                                 }
-                                $ligne[$j]=$dispo;
-                                break;
-                            case 2:
-                                $ligne[$j]="arrgggh";
-                                break;
-                            case 3:
-                                $ligne[$j]="test";
-                                break;
-                            case 4:
-                                $ligne[$j]="*****";
-                                break;
-                            case 5:
-                                $ligne[$j]=".....";
-                                break;
-                                    
-                        }
-                }
-                //$resa[$i]=$ligneResa;
-                $plage[$i]=$ligne;
+                           
+                            }
+                            $ligne[$j]=$dispo;
+                            break;
+
+                        case 2:
+                           
+                            $dispo=true;
+                            foreach($reservations as $reservation)
+                            {
+                                
+                                if($reservation->abonnement->pack->seance->type=="cellum_6_30")
+                                {
+                                $hd=new DateTime($reservation->heure_debut);
+                                $hf=new DateTime($reservation->heure_fin);
+                                if(  $clone<=$hf and $clone>=$hd)
+                                $dispo=false;
+                                }
+                                if($reservation->abonnement->pack->seance->type=="cellum_6_20")
+                                {
+                                $hd=new DateTime($reservation->heure_debut);
+                                $hf=new DateTime($reservation->heure_fin);
+                                if(  $clone<=$hf and $clone>=$hd)
+                                $dispo=false;
+                                }
+                           
+                            }
+                            $ligne[$j]=$dispo;
+                            break;
+                            
+                        case 3:
+                           
+                            $dispo=true;
+                            foreach($reservations as $reservation)
+                            {
+                                
+                                if($reservation->abonnement->pack->seance->type=="bodysculptor")
+                                {
+                                $hd=new DateTime($reservation->heure_debut);
+                                $hf=new DateTime($reservation->heure_fin);
+                                if(  $clone<=$hf and $clone>=$hd)
+                                $dispo=false;
+                                }
+                           
+                            }
+                            $ligne[$j]=$dispo;
+                            break;
+                            
+                        case 4:
+                           
+                            $dispo=true;
+                            foreach($reservations as $reservation)
+                            {
+                                
+                                if($reservation->abonnement->pack->seance->type=="pressotherapie")
+                                {
+                                $hd=new DateTime($reservation->heure_debut);
+                                $hf=new DateTime($reservation->heure_fin);
+                                if(  $clone<=$hf and $clone>=$hd)
+                                $dispo=false;
+                                }
+                           
+                            }
+                            $ligne[$j]=$dispo;
+                            break;
+                            
+                        case 5:
+                            
+                            $dispo=true;
+                            foreach($reservations as $reservation)
+                            {
+                                
+                                if($reservation->abonnement->pack->seance->type=="electrostimilation")
+                                {
+                                $hd=new DateTime($reservation->heure_debut);
+                                $hf=new DateTime($reservation->heure_fin);
+                                if(  $clone<=$hf and $clone>=$hd)
+                                $dispo=false;
+                                }
+                           
+                            }
+                            $ligne[$j]=$dispo;
+                            break;
+                            
+                                
+                    }
             }
-            //dd($resa);
-            //dd($plage);
-            return View::make('agendaJourDispo')
+            
+            $plage[$i]=$ligne;
+        }
+        /************************************************** */
+        /*controle du chargement du tableau multidimentionel*/
+        //dd($plage);
+        /************************************************** */
+
+
+        /********************************************** */
+        /*lancement de la vue détail du jour réservation*/
+        
+        return View::make('agendaJourDispo')
                 ->with('plage',$plage)
                 ->with('client',$client)
                 ->with('abonnements',$abonnements)
                 ->with('resa',$resa)
                 ->with('abonnement',$abonnement);
-        }
-    
+            
+    }
+
+        /********************************************** */
+        /*sauvegarde de la réservation en base de donnée*/
+        /********************************************** */
         public function enregistrement(Request $request, $id)
         {
-            var_dump("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYAAAAAAAAAAAAAAAAAAAAAAAAAAAH");
+            
             $reservation=new Reservation;
             $abonnement=Abonnement::find($request->id_abonnement);
             $heure=new Datetime($request->heure);
@@ -146,13 +206,15 @@ class ReservationController extends Controller
             $reservation->jour=$jour;
             $reservation->heure_debut=$heure;
             $clone=clone $heure;
-            
-            //$heure->setTime(9,0);
             $reservation->heure_fin=$clone->modify("+".(string)$abonnement->pack->seance->duree." "."minutes");
             $reservation->etat="actif";
             $reservation->save();
-            //dd($reservation);
-            //dd($request);
-            var_dump("******************SAUVEGARDE");
+
+            /*********************************************************** */
+            /*controle de l'affectation des champs de l'objet réservation*/
+            dd($reservation);
+            /*********************************************************** */
+            
+            
         }
 }
